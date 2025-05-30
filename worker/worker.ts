@@ -1,7 +1,7 @@
 import { handleUnfurlRequest } from 'cloudflare-workers-unfurl'
-import { AutoRouter, cors, error, IRequest } from 'itty-router'
+import { AutoRouter, cors, error, type IRequest } from 'itty-router'
 import { handleAssetDownload, handleAssetUpload } from './assetUploads'
-import { Environment } from './types'
+import type { Environment } from './types'
 
 // make sure our sync durable object is made available to cloudflare
 export { TldrawDurableObject } from './TldrawDurableObject'
@@ -32,6 +32,22 @@ const router = AutoRouter<IRequest, [env: Environment, ctx: ExecutionContext]>({
 
 	// bookmarks need to extract metadata from pasted URLs:
 	.get('/unfurl', handleUnfurlRequest)
+
+	// root path - provide API information
+	.get('/', () => {
+		return new Response(JSON.stringify({
+			name: 'Tldraw Sync Worker',
+			version: '1.0.0',
+			endpoints: {
+				connect: '/connect/:roomId - WebSocket connection for room sync',
+				upload: 'POST /uploads/:uploadId - Upload assets',
+				download: 'GET /uploads/:uploadId - Download assets',
+				unfurl: '/unfurl?url=<url> - Get bookmark metadata'
+			}
+		}, null, 2), {
+			headers: { 'Content-Type': 'application/json' }
+		})
+	})
 
 // export our router for cloudflare
 export default router

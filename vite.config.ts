@@ -10,8 +10,9 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [react()],
 		define: {
-			'process.env.TLDRAW_WORKER_URL':
-				process.env.TLDRAW_WORKER_URL ?? '`http://${location.hostname}:5172`',
+			'process.env.TLDRAW_WORKER_URL': JSON.stringify(
+				process.env.TLDRAW_WORKER_URL ?? '`http://${location.hostname}:5172`'
+			),
 		},
 	}
 })
