@@ -14,6 +14,13 @@
 		"dev:client": "vite",
 		"dev:worker": "wrangler dev",
 		"build": "tsc && vite build",
+		"build:prod": "TLDRAW_WORKER_URL=https://tldraw-worker.automatehub.workers.dev npm run build",
+		"deploy:worker": "wrangler deploy",
+		"deploy:client": "npm run build:prod && wrangler pages deploy dist --project-name tldraw-client",
+		"deploy:all": "npm run deploy:worker && npm run deploy:client",
+		"setup": "wrangler r2 bucket create tldraw-content && wrangler r2 bucket create tldraw-content-preview",
+		"status": "wrangler deployments list && echo '\n--- R2 Buckets ---' && wrangler r2 bucket list",
+		"logs": "wrangler tail",
 		"lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview"
 	},
